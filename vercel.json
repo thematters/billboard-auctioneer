@@ -2,7 +2,7 @@
   "regions": ["sin1"],
   "crons": [
     {
-      "path": "app/api/clear-auctions",
+      "path": "/api/clear-auctions",
       "schedule": "*/10 * * * *"
     }
   ],
