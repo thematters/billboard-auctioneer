@@ -1,9 +1,8 @@
-import { getContract } from "viem";
 import { billboardAbi, billboardRegistryAbi } from "./abi";
 import { publicClient, walletClient, account } from "./client";
 
 // number of auctions to be cleared at once
-const BATCH_SIZE = 10;
+const BATCH_SIZE = 2;
 
 const billboardContract = {
   address: process.env.BILLBOARD_CONTRACT_ADDRESS as `0x${string}`,
