@@ -55,6 +55,15 @@ export const billboardAbi = [
   },
   {
     inputs: [
+      { internalType: "uint256[]", name: "tokenIds_", type: "uint256[]" },
+    ],
+    name: "clearAuctions",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       { internalType: "uint256", name: "tokenId_", type: "uint256" },
       { internalType: "uint256", name: "auctionId_", type: "uint256" },
     ],
@@ -62,10 +71,10 @@ export const billboardAbi = [
     outputs: [
       {
         components: [
-          { internalType: "uint256", name: "startAt", type: "uint256" },
-          { internalType: "uint256", name: "endAt", type: "uint256" },
-          { internalType: "uint256", name: "leaseStartAt", type: "uint256" },
-          { internalType: "uint256", name: "leaseEndAt", type: "uint256" },
+          { internalType: "uint64", name: "startAt", type: "uint64" },
+          { internalType: "uint64", name: "endAt", type: "uint64" },
+          { internalType: "uint64", name: "leaseStartAt", type: "uint64" },
+          { internalType: "uint64", name: "leaseEndAt", type: "uint64" },
           { internalType: "address", name: "highestBidder", type: "address" },
         ],
         internalType: "struct IBillboardRegistry.Auction",

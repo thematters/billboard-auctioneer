@@ -2,10 +2,14 @@ import { getContract } from "viem";
 import { billboardAbi, billboardRegistryAbi } from "./abi";
 import { publicClient, walletClient, account } from "./client";
 
-// const billboardContract = {
-//   address: process.env.BILLBOARD_CONTRACT_ADDRESS as `0x${string}`,
-//   abi: billboardAbi,
-// } as const;
+// number of auctions to be cleared at once
+const BATCH_SIZE = 10;
+
+const billboardContract = {
+  address: process.env.BILLBOARD_CONTRACT_ADDRESS as `0x${string}`,
+  abi: billboardAbi,
+  account,
+} as const;
 
 const billboardRegsitryContract = {
   address: process.env.BILLBOARD_REGISTRY_CONTRACT_ADDRESS as `0x${string}`,
@@ -64,7 +68,7 @@ export const clearAuctions = async () => {
       console.log(result);
 
       // already ended
-      if (Number(result.endAt) > now) {
+      if (Number(result.endAt) * 1000 > now) {
         return false;
       }
 
@@ -75,9 +79,15 @@ export const clearAuctions = async () => {
 
       return true;
     })
-    .map(({ tokenId, auctionId }) => ({ tokenId, auctionId }));
+    .map(({ tokenId, auctionId }) => ({ tokenId, auctionId }))
+    .slice(0, BATCH_SIZE);
 
   console.log("auctionIds to clear: ", auctions);
 
   // clear auctions
+  await walletClient.writeContract({
+    ...billboardContract,
+    functionName: "clearAuctions",
+    args: [auctions.map(({ tokenId }) => tokenId)],
+  });
 };
