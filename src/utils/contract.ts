@@ -84,6 +84,9 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
   console.log("auctionIds to clear: ", auctions);
 
   // clear auctions
+  if (auctions.length <= 0) {
+    return;
+  }
   await walletClient.writeContract({
     ...billboardContract,
     functionName: "clearAuctions",
