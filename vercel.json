@@ -2,8 +2,8 @@
   "regions": ["sin1"],
   "crons": [
     {
-      "path": "/api/clear-auctions",
-      "schedule": "*/10 * * * *"
+      "path": "/api/clear-auctions/1/5",
+      "schedule": "0/30 * * * *"
     }
   ],
   "functions": {

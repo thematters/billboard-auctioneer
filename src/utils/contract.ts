@@ -15,17 +15,19 @@ const billboardRegsitryContract = {
   abi: billboardRegistryAbi,
 } as const;
 
-export const clearAuctions = async () => {
+type ClearAuctionsProps = {
+  // token id range to check
+  from: number;
+  to: number;
+};
+
+export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
   // get auctions to be cleared
-  const lastTokenId = await publicClient.readContract({
-    ...billboardRegsitryContract,
-    functionName: "lastTokenId",
-  });
   const auctionIdsResults = await publicClient.multicall({
-    contracts: Array.from({ length: Number(lastTokenId) }, (_, i) => ({
+    contracts: Array.from({ length: to - from + 1 }, (_, i) => ({
       ...billboardRegsitryContract,
       functionName: "nextBoardAuctionId",
-      args: [BigInt(i + 1)],
+      args: [BigInt(i + from)],
     })),
   });
 
@@ -63,8 +65,6 @@ export const clearAuctions = async () => {
       }
 
       const now = Date.now();
-
-      console.log(result);
 
       // already ended
       if (Number(result.endAt) * 1000 > now) {
