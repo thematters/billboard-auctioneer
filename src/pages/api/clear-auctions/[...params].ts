@@ -2,12 +2,12 @@ import { clearAuctions } from "@/utils";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (
-    process.env.RUNTIME !== "local" &&
-    req.headers["Authorization"] !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
-    return res.status(401).json({ success: false, error: "unauthorized" });
-  }
+  // if (
+  //   process.env.RUNTIME !== "local" &&
+  //   req.headers["Authorization"] !== `Bearer ${process.env.CRON_SECRET}`
+  // ) {
+  //   return res.status(401).json({ success: false, error: "unauthorized" });
+  // }
 
   const { params } = req.query as { params: string[] };
   const from = Number(params[0]) || 0;
