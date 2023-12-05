@@ -86,9 +86,9 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
   if (auctions.length <= 0) {
     return;
   }
-  // await walletClient.writeContract({
-  //   ...billboardContract,
-  //   functionName: "clearAuctions",
-  //   args: [auctions.map(({ tokenId }) => tokenId)],
-  // });
+  await walletClient.writeContract({
+    ...billboardContract,
+    functionName: "clearAuctions",
+    args: [auctions.map(({ tokenId }) => tokenId)],
+  });
 };
