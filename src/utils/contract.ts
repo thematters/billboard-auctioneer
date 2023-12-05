@@ -53,6 +53,7 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
     })),
   });
 
+  const blockNow = await publicClient.getBlockNumber();
   const auctions = autionsResults
     .map(({ result }, i) => ({
       tokenId: auctionIds[i].tokenId,
@@ -64,10 +65,8 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
         return false;
       }
 
-      const now = Date.now();
-
       // already ended
-      if (Number(result.endAt) * 1000 > now) {
+      if (result.endAt > blockNow) {
         return false;
       }
 
@@ -87,9 +86,9 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
   if (auctions.length <= 0) {
     return;
   }
-  await walletClient.writeContract({
-    ...billboardContract,
-    functionName: "clearAuctions",
-    args: [auctions.map(({ tokenId }) => tokenId)],
-  });
+  // await walletClient.writeContract({
+  //   ...billboardContract,
+  //   functionName: "clearAuctions",
+  //   args: [auctions.map(({ tokenId }) => tokenId)],
+  // });
 };
