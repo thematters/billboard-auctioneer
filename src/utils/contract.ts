@@ -1,27 +1,30 @@
 import { billboardAbi, billboardRegistryAbi } from "./abi";
-import { publicClient, walletClient, account } from "./client";
+import { publicClient, account } from "./client";
 
 // number of auctions to be cleared at once
 const BATCH_SIZE = 2;
 
-const billboardContract = {
+export const billboardContract = {
   address: process.env.BILLBOARD_CONTRACT_ADDRESS as `0x${string}`,
   abi: billboardAbi,
   account,
 } as const;
 
-const billboardRegsitryContract = {
+export const billboardRegsitryContract = {
   address: process.env.BILLBOARD_REGISTRY_CONTRACT_ADDRESS as `0x${string}`,
   abi: billboardRegistryAbi,
 } as const;
 
-type ClearAuctionsProps = {
+type Auction = { tokenId: bigint; auctionId: bigint };
+
+export const getClearableAuctions = async ({
+  from,
+  to,
+}: {
   // token id range to check
   from: number;
   to: number;
-};
-
-export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
+}): Promise<Auction[]> => {
   // get auctions to be cleared
   const auctionIdsResults = await publicClient.multicall({
     contracts: Array.from({ length: to - from + 1 }, (_, i) => ({
@@ -42,7 +45,7 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
   console.log("auctionIds to check: ", auctionIds);
 
   if (auctionIds.length <= 0) {
-    return;
+    return [];
   }
 
   const autionsResults = await publicClient.multicall({
@@ -70,7 +73,7 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
         return false;
       }
 
-      // already leased
+      // already cleared
       if (result.leaseEndAt) {
         return false;
       }
@@ -82,13 +85,5 @@ export const clearAuctions = async ({ from, to }: ClearAuctionsProps) => {
 
   console.log("auctionIds to clear: ", auctions);
 
-  // clear auctions
-  if (auctions.length <= 0) {
-    return;
-  }
-  await walletClient.writeContract({
-    ...billboardContract,
-    functionName: "clearAuctions",
-    args: [auctions.map(({ tokenId }) => tokenId)],
-  });
+  return auctions;
 };
